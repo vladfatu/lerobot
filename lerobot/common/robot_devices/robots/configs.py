@@ -622,7 +622,7 @@ class LeKiwiRobotConfig(RobotConfig):
     leader_arms: dict[str, MotorsBusConfig] = field(
         default_factory=lambda: {
             "main": FeetechMotorsBusConfig(
-                port="/dev/tty.usbmodem58FD0173461",
+                port="/dev/tty.usbmodem5A460849101",
                 motors={
                     # name: (index, model)
                     "shoulder_pan": [1, "sts3215"],
