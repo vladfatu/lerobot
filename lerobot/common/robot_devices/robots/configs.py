@@ -613,7 +613,7 @@ class LeKiwiRobotConfig(RobotConfig):
                 camera_index="/dev/cam_front", fps=30, width=640, height=480, rotation=90
             ),
             "wrist": OpenCVCameraConfig(
-                camera_index="/dev/cam_wrist", fps=30, width=640, height=480, rotation=180
+                camera_index="/dev/cam_wrist", fps=30, width=640, height=480, rotation=90
             ),
         }
     )
