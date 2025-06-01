@@ -610,7 +610,7 @@ class LeKiwiRobotConfig(RobotConfig):
     cameras: dict[str, CameraConfig] = field(
         default_factory=lambda: {
             "front": OpenCVCameraConfig(
-                camera_index="/dev/cam_front", fps=30, width=640, height=480, rotation=90
+                camera_index="/dev/cam_front", fps=30, width=640, height=480, rotation=0
             ),
             "wrist": OpenCVCameraConfig(
                 camera_index="/dev/cam_wrist", fps=30, width=640, height=480, rotation=90
