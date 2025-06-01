@@ -603,16 +603,17 @@ class LeKiwiRobotConfig(RobotConfig):
 
     # Network Configuration
     ip: str = "192.168.1.140"
+    # ip: str = "10.227.12.211"
     port: int = 5555
     video_port: int = 5556
 
     cameras: dict[str, CameraConfig] = field(
         default_factory=lambda: {
             "front": OpenCVCameraConfig(
-                camera_index="/dev/video0", fps=30, width=640, height=480, rotation=90
+                camera_index="/dev/cam_front", fps=30, width=640, height=480, rotation=90
             ),
             "wrist": OpenCVCameraConfig(
-                camera_index="/dev/video2", fps=30, width=640, height=480, rotation=180
+                camera_index="/dev/cam_wrist", fps=30, width=640, height=480, rotation=180
             ),
         }
     )
