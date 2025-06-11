@@ -19,6 +19,7 @@ import time
 from functools import cached_property
 from itertools import chain
 from typing import Any
+from ultralytics import YOLO
 
 import numpy as np
 
@@ -73,6 +74,7 @@ class LeKiwi(Robot):
         self.arm_motors = [motor for motor in self.bus.motors if motor.startswith("arm")]
         self.base_motors = [motor for motor in self.bus.motors if motor.startswith("base")]
         self.cameras = make_cameras_from_configs(config.cameras)
+        self.yolo = YOLO('yolov8s.pt') 
 
     @property
     def _state_ft(self) -> dict[str, type]:
@@ -414,3 +416,36 @@ class LeKiwi(Robot):
             cam.disconnect()
 
         logger.info(f"{self} disconnected.")
+    
+    def search_for_object(self, object_name: str):
+        """Search for a specific object using YOLO detection.       
+        This method will rotate the robot slowly while checking for the object in the camera feed.
+        If the object is detected, it will stop the robot.
+        Args:
+            object_name (str): The name of the object to search for.
+        """
+
+        SEARCH_ARM_ACTION = {'arm_shoulder_pan.pos': -5.0, 'arm_shoulder_lift.pos': -98.92428630533719, 'arm_elbow_flex.pos': 99.27895448400182, 'arm_wrist_flex.pos': 19.973137973137966, 'arm_wrist_roll.pos': -0.31746031746031633, 'arm_gripper.pos': 0.867244829886591}
+        SLOW_ROTATE_BASE_ACTION = {'x.vel': 0.0, 'y.vel': 0.0, 'theta.vel': -10.0}
+
+        self.send_action(SEARCH_ARM_ACTION | SLOW_ROTATE_BASE_ACTION)
+
+        # Open video capture from USB camera
+        cap = self.cameras['front'].videocapture
+        print(f"Camera is opened from: {cap.isOpened()}")
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                print("Failed to read from camera. Stopping the robot.")
+                self.stop_base()
+                break
+
+            # Run YOLO detection
+            results = self.yolo.predict(frame, conf=0.3, verbose=False)
+            print("Prediction")
+
+            if any(self.yolo.names[box.cls[0].item()] == object_name for r in results for box in r.boxes):
+                print(f"{object_name.capitalize()} detected, stopping the robot.")
+                self.stop_base()
+                break

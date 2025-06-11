@@ -81,6 +81,8 @@ class LeKiwiClientConfig(RobotConfig):
             # Speed control
             "speed_up": "r",
             "speed_down": "f",
+            # Search
+            "search": "o",
             # quit teleop
             "quit": "q",
         }

@@ -73,7 +73,11 @@ def main():
             try:
                 msg = host.zmq_cmd_socket.recv_string(zmq.NOBLOCK)
                 data = dict(json.loads(msg))
-                _action_sent = robot.send_action(data)
+                print(f"Received command: {data}")
+                if "search" in data:
+                    robot.search_for_object(data["search"])
+                else:
+                    _action_sent = robot.send_action(data)
                 last_cmd_time = time.time()
                 watchdog_active = False
             except zmq.Again:

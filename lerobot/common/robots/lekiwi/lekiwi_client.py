@@ -328,6 +328,9 @@ class LeKiwiClient(Robot):
         # TODO(Steven): Remove the np conversion when it is possible to record a non-numpy array value
         actions = np.array([action.get(k, 0.0) for k in self._state_order], dtype=np.float32)
         return {"action": actions}
+    
+    def send_search_for_object(self, object_name: str):
+        self.zmq_cmd_socket.send_string(json.dumps({"search": object_name})) 
 
     def disconnect(self):
         """Cleans ZMQ comms"""
