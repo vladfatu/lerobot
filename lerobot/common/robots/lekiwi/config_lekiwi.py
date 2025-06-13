@@ -26,7 +26,7 @@ def lekiwi_cameras_config() -> dict[str, CameraConfig]:
             index_or_path="/dev/cam_front", fps=30, width=640, height=480
         ),
         "wrist": OpenCVCameraConfig(
-            index_or_path="/dev/cam_wrist", fps=30, width=480, height=640, rotation=Cv2Rotation.ROTATE_180
+            index_or_path="/dev/cam_wrist", fps=30, width=480, height=640, rotation=Cv2Rotation.ROTATE_90
         ),
     }
 
