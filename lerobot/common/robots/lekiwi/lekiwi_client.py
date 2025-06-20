@@ -204,7 +204,8 @@ class LeKiwiClient(Robot):
 
         # Decode images
         image_observation = {
-            f"observation.images.{key}": value
+        # TODO vlad remove extra string
+            key: value
             for key, value in observation.items()
             if key in self._cameras_ft
         }
@@ -214,7 +215,8 @@ class LeKiwiClient(Robot):
             if frame is not None:
                 current_frames[cam_name] = frame
 
-        return current_frames, {"observation.state": state_vec}
+        # TODO vlad replace with flat state and remove object
+        return current_frames, flat_state
 
     def _get_data(self) -> Tuple[Dict[str, np.ndarray], Dict[str, Any], Dict[str, Any]]:
         """
@@ -267,7 +269,8 @@ class LeKiwiClient(Robot):
             if frame is None:
                 logging.warning("Frame is None")
                 frame = np.zeros((640, 480, 3), dtype=np.uint8)
-            obs_dict[cam_name] = torch.from_numpy(frame)
+            # TODO vlad remove numpy
+            obs_dict[cam_name] = frame
 
         return obs_dict
 
@@ -331,6 +334,9 @@ class LeKiwiClient(Robot):
     
     def send_search_for_object(self, object_name: str):
         self.zmq_cmd_socket.send_string(json.dumps({"search": object_name})) 
+
+    def send_return_to_sender(self):
+        self.zmq_cmd_socket.send_string(json.dumps({"return_to_sender": True})) 
 
     def disconnect(self):
         """Cleans ZMQ comms"""

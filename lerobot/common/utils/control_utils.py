@@ -112,6 +112,8 @@ def predict_action(
     ):
         # Convert to pytorch format: channel first and float32 in [0,1] with batch dimension
         for name in observation:
+            # print(f"Processing observation: {name}")
+            # print(f"Observation shape: {observation[name]}")
             observation[name] = torch.from_numpy(observation[name])
             if "image" in name:
                 observation[name] = observation[name].type(torch.float32) / 255
