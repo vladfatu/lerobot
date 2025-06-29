@@ -204,8 +204,9 @@ class LeKiwiClient(Robot):
 
         # Decode images
         image_observation = {
-        # TODO vlad remove extra string
-            key: value
+            # TODO vlad remove extra string
+            # key: value
+            f"observation.images.{key}": value
             for key, value in observation.items()
             if key in self._cameras_ft
         }
@@ -216,7 +217,8 @@ class LeKiwiClient(Robot):
                 current_frames[cam_name] = frame
 
         # TODO vlad replace with flat state and remove object
-        return current_frames, flat_state
+        # return current_frames, flat_state
+        return current_frames, {"observation.state": state_vec}
 
     def _get_data(self) -> Tuple[Dict[str, np.ndarray], Dict[str, Any], Dict[str, Any]]:
         """
@@ -270,7 +272,8 @@ class LeKiwiClient(Robot):
                 logging.warning("Frame is None")
                 frame = np.zeros((640, 480, 3), dtype=np.uint8)
             # TODO vlad remove numpy
-            obs_dict[cam_name] = frame
+            # obs_dict[cam_name] = frame
+            obs_dict[cam_name] = torch.from_numpy(frame)
 
         return obs_dict
 

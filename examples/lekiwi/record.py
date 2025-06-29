@@ -13,7 +13,6 @@ EPISODE_LENGTH = 15  # seconds
 RESET_TIME = 7  # seconds
 
 # Use this action
-# DEFAULT_ARM_ACTION = {'arm_shoulder_pan.pos': -5.0, 'arm_shoulder_lift.pos': -98.92428630533719, 'arm_elbow_flex.pos': 99.27895448400182, 'arm_wrist_flex.pos': 19.973137973137966, 'arm_wrist_roll.pos': -0.31746031746031633, 'arm_gripper.pos': 30.567244829886591}
 INACTIVE_BASE_ACTION = {'x.vel': 0.0, 'y.vel': 0.0, 'theta.vel': 0.0}
 
 leader_arm_config = SO101LeaderConfig(port="/dev/tty.usbmodem5A460849101", id="leader_101")
@@ -44,8 +43,9 @@ if not robot.is_connected or not leader_arm.is_connected or not keyboard.is_conn
     exit()
 
 print("Saving initial arm position to reset after each episode")
-initial_observation = robot.get_observation()
-initial_arm_action = {'arm_shoulder_pan.pos': initial_observation['arm_shoulder_pan.pos'], 'arm_shoulder_lift.pos': initial_observation['arm_shoulder_lift.pos'], 'arm_elbow_flex.pos': initial_observation['arm_elbow_flex.pos'], 'arm_wrist_flex.pos': initial_observation['arm_wrist_flex.pos'], 'arm_wrist_roll.pos': initial_observation['arm_wrist_roll.pos'], 'arm_gripper.pos': initial_observation['arm_gripper.pos']}
+initial_arm_action = leader_arm.get_action()
+initial_arm_action = {f"arm_{k}": v for k, v in initial_arm_action.items()}
+
 
 print("Starting LeKiwi recording")
 
