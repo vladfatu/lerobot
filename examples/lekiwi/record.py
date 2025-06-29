@@ -8,7 +8,13 @@ from lerobot.common.teleoperators.keyboard import KeyboardTeleop, KeyboardTeleop
 from lerobot.common.teleoperators.so101_leader import SO101Leader, SO101LeaderConfig
 import time
 
-NB_CYCLES_CLIENT_CONNECTION = 750
+NB_EPISODES = 2
+EPISODE_LENGTH = 15  # seconds
+RESET_TIME = 7  # seconds
+
+# Use this action
+# DEFAULT_ARM_ACTION = {'arm_shoulder_pan.pos': -5.0, 'arm_shoulder_lift.pos': -98.92428630533719, 'arm_elbow_flex.pos': 99.27895448400182, 'arm_wrist_flex.pos': 19.973137973137966, 'arm_wrist_roll.pos': -0.31746031746031633, 'arm_gripper.pos': 30.567244829886591}
+INACTIVE_BASE_ACTION = {'x.vel': 0.0, 'y.vel': 0.0, 'theta.vel': 0.0}
 
 leader_arm_config = SO101LeaderConfig(port="/dev/tty.usbmodem5A460849101", id="leader_101")
 leader_arm = SO101Leader(leader_arm_config)
@@ -16,7 +22,7 @@ leader_arm = SO101Leader(leader_arm_config)
 keyboard_config = KeyboardTeleopConfig()
 keyboard = KeyboardTeleop(keyboard_config)
 
-robot_config = LeKiwiClientConfig(remote_ip="192.168.8.191", id="lekiwi_101")
+robot_config = LeKiwiClientConfig(remote_ip="192.168.1.13", id="lekiwi_101")
 robot = LeKiwiClient(robot_config)
 
 action_features = hw_to_dataset_features(robot.action_features, "action")
@@ -37,14 +43,18 @@ robot.connect()
 if not robot.is_connected or not leader_arm.is_connected or not keyboard.is_connected:
     exit()
 
+print("Saving initial arm position to reset after each episode")
+initial_observation = robot.get_observation()
+initial_arm_action = {'arm_shoulder_pan.pos': initial_observation['arm_shoulder_pan.pos'], 'arm_shoulder_lift.pos': initial_observation['arm_shoulder_lift.pos'], 'arm_elbow_flex.pos': initial_observation['arm_elbow_flex.pos'], 'arm_wrist_flex.pos': initial_observation['arm_wrist_flex.pos'], 'arm_wrist_roll.pos': initial_observation['arm_wrist_roll.pos'], 'arm_gripper.pos': initial_observation['arm_gripper.pos']}
+
 print("Starting LeKiwi recording")
 
-
-for i in range(10):
+# This loop will run for NB_EPISODES episodes
+for i in range(NB_EPISODES):
     print(f"Starting episode {i + 1}")
-    # This loop will run for NB_CYCLES_CLIENT_CONNECTION iterations or until 20 seconds have passed
+    # This loop will run for EPISODE_LENGTH seconds
     start_time = time.time()
-    while time.time() - start_time < 15:
+    while time.time() - start_time < EPISODE_LENGTH:
         arm_action = leader_arm.get_action()
         arm_action = {f"arm_{k}": v for k, v in arm_action.items()}
 
@@ -66,13 +76,10 @@ for i in range(10):
     print("Saving dataset episode")
     dataset.save_episode()
 
-    SEARCH_ARM_ACTION = {'arm_shoulder_pan.pos': -5.0, 'arm_shoulder_lift.pos': -98.92428630533719, 'arm_elbow_flex.pos': 99.27895448400182, 'arm_wrist_flex.pos': 19.973137973137966, 'arm_wrist_roll.pos': -0.31746031746031633, 'arm_gripper.pos': 30.567244829886591}
-    INACTIVE_BASE_ACTION = {'x.vel': 0.0, 'y.vel': 0.0, 'theta.vel': 0.0}
 
-
-    robot.send_action(SEARCH_ARM_ACTION | INACTIVE_BASE_ACTION)
-    # sleep for 5 seconds before the next cycle
-    time.sleep(7)
+    # reset the robot to a default state and sleep for RESET_TIME seconds before the next cycle
+    robot.send_action(initial_arm_action | INACTIVE_BASE_ACTION)
+    time.sleep(RESET_TIME)
 
 print("Disconnecting Teleop Devices and LeKiwi Client")
 robot.disconnect()

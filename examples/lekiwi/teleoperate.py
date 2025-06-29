@@ -4,7 +4,7 @@ from lerobot.common.teleoperators.so101_leader import SO101Leader, SO101LeaderCo
 
 SEARCH_ARM_ACTION = {'arm_shoulder_pan.pos': -5.0, 'arm_shoulder_lift.pos': -98.92428630533719, 'arm_elbow_flex.pos': 99.27895448400182, 'arm_wrist_flex.pos': 19.973137973137966, 'arm_wrist_roll.pos': -0.31746031746031633, 'arm_gripper.pos': 0.867244829886591}
 
-robot_config = LeKiwiClientConfig(remote_ip="192.168.1.12", id="lekiwi_101")
+robot_config = LeKiwiClientConfig(remote_ip="192.168.1.13", id="lekiwi_101")
 
 teleop__arm_config = SO101LeaderConfig(
     port="/dev/tty.usbmodem5A460849101",
