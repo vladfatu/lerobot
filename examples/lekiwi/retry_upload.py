@@ -16,7 +16,7 @@ leader_arm = SO101Leader(leader_arm_config)
 keyboard_config = KeyboardTeleopConfig()
 keyboard = KeyboardTeleop(keyboard_config)
 
-robot_config = LeKiwiClientConfig(remote_ip="192.168.8.191", id="lekiwi_101")
+robot_config = LeKiwiClientConfig(remote_ip="192.168.10.19", id="lekiwi_101")
 robot = LeKiwiClient(robot_config)
 
 action_features = hw_to_dataset_features(robot.action_features, "action")

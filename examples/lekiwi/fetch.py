@@ -9,7 +9,7 @@ from lerobot.common.utils.utils import get_safe_torch_device
 import time
 
 
-robot_config = LeKiwiClientConfig(remote_ip="192.168.1.13", id="lekiwi_101")
+robot_config = LeKiwiClientConfig(remote_ip="192.168.10.19", id="lekiwi_101")
 
 print("Loading the policy...")
 policy = SmolVLAPolicy.from_pretrained("vladfatu/lekiwi_101")

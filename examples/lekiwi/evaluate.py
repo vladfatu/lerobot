@@ -8,7 +8,7 @@ import time
 
 NB_CYCLES_CLIENT_CONNECTION = 1000
 
-robot_config = LeKiwiClientConfig(remote_ip="192.168.1.12", id="lekiwi_101")
+robot_config = LeKiwiClientConfig(remote_ip="192.168.10.19", id="lekiwi_101")
 robot = LeKiwiClient(robot_config)
 
 robot.connect()
